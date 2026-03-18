@@ -464,7 +464,7 @@ app.get('/api/budget/stats', async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 migrate().then(() => {
-  app.listen(PORT, () => console.log(`\n✅  Office Admin API → http://localhost:${PORT}/api/health\n`));
+  app.listen(PORT, () => console.log(`\n✅  Office Admin API → https://itzsam89.github.io/office-admin-portalV2/api/health\n`));
 }).catch(e => { console.error('Migration failed:', e); process.exit(1); });
 
 module.exports = app;
