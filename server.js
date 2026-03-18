@@ -17,8 +17,8 @@ app.use(cors({
 }));
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/office_admin',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString: process.env.Database,
+  ssl: { rejectUnauthorized: false }
 });
 
 /* ── auto-migrate: create tables if not exist ── */
