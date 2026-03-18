@@ -215,7 +215,7 @@ app.get('/api/grocery/purchases', async (req, res) => {
       SELECT gp.id, gi.name AS item_name, gi.unit, gi.category,
         gp.item_id, gp.month, gp.year, gp.qty, gp.price,
         ROUND(gp.qty * gp.price, 2) AS total_cost,
-        gp.vendor, gp.date, gp.notes, gp.added_by, gp.bill_url,
+        gp.vendor, gp.date, gp.notes, gp.added_by, gp.bill_url, gp.created_at,
         COALESCE((SELECT SUM(fd.qty) FROM floor_distributions fd WHERE fd.purchase_id=gp.id),0) AS total_dist,
         gp.qty - COALESCE((SELECT SUM(fd.qty) FROM floor_distributions fd WHERE fd.purchase_id=gp.id),0) AS remaining,
         COALESCE((
