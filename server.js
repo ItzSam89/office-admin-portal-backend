@@ -93,6 +93,12 @@ async function migrate() {
       notes        TEXT,
       created_at   TIMESTAMP DEFAULT NOW()
     );
+
+    CREATE TABLE IF NOT EXISTS grocery_categories (
+      id         SERIAL PRIMARY KEY,
+      name       VARCHAR(100) NOT NULL UNIQUE,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
   `);
 
   /* seed default floors if empty */
@@ -128,6 +134,15 @@ async function migrate() {
         ('Coffee','kg','food'),('Cooking Oil','litre','food'),
         ('Detergent','kg','cleaning'),('Toilet Paper','rolls','cleaning'),
         ('Hand Sanitizer','litre','cleaning'),('Garbage Bags','packs','cleaning')
+    `);
+  }
+
+  /* seed default grocery categories if empty */
+  const gc = await pool.query('SELECT COUNT(*) FROM grocery_categories');
+  if (parseInt(gc.rows[0].count) === 0) {
+    await pool.query(`
+      INSERT INTO grocery_categories (name) VALUES
+        ('food'),('cleaning'),('stationary'),('miscellaneous')
     `);
   }
 
@@ -172,6 +187,44 @@ app.put('/api/floors/:id', async (req, res) => {
 app.delete('/api/floors/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM floors WHERE id=$1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+/* ══════════════════════════════════════════
+   GROCERY — CATEGORIES
+══════════════════════════════════════════ */
+
+app.get('/api/grocery/categories', async (req, res) => {
+  try { res.json((await pool.query('SELECT * FROM grocery_categories ORDER BY name')).rows); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/grocery/categories', async (req, res) => {
+  const { name } = req.body;
+  try {
+    const r = await pool.query(
+      'INSERT INTO grocery_categories (name) VALUES ($1) ON CONFLICT (name) DO NOTHING RETURNING *',
+      [name.trim().toLowerCase()]
+    );
+    res.json(r.rows[0]);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.put('/api/grocery/categories/:id', async (req, res) => {
+  const { name } = req.body;
+  try {
+    const r = await pool.query(
+      'UPDATE grocery_categories SET name=$1 WHERE id=$2 RETURNING *',
+      [name.trim().toLowerCase(), req.params.id]
+    );
+    res.json(r.rows[0]);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/grocery/categories/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM grocery_categories WHERE id=$1', [req.params.id]);
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
