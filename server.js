@@ -382,7 +382,7 @@ app.get('/api/budget/stats', async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 migrate().then(() => {
-  app.listen(PORT, () => console.log(`\n✅  Office Admin API → https://office-admin-portal-backend.onrender.com/api/health\n`));
+  app.listen(PORT, () => console.log(`\n✅  Office Admin API → https://office-admin-portal-backend-f0w9.onrender.com/api/health\n`));
 }).catch(e => { console.error('Migration failed:', e); process.exit(1); });
 
 module.exports = app;
